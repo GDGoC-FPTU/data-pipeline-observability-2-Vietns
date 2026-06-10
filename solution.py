@@ -22,7 +22,6 @@ Cham diem tu dong:
 
 import json
 import pandas as pd
-import os
 import datetime
 
 # --- CONFIGURATION ---
@@ -42,12 +41,17 @@ def extract(file_path):
         list: Danh sach cac records (dictionaries)
     """
     print(f"Extracting data from {file_path}...")
-    # TODO: Viet code doc file JSON o day
-    # Vi du:
-    #   with open(file_path, 'r') as f:
-    #       data = json.load(f)
-    #   return data
-    pass
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        print(f"Extract complete. {len(data)} records extracted.")
+        return data
+    except FileNotFoundError:
+        print(f"Extract failed. File not found: {file_path}")
+        return []
+    except json.JSONDecodeError as exc:
+        print(f"Extract failed. Invalid JSON: {exc}")
+        return []
 
 
 def validate(data):
@@ -69,10 +73,26 @@ def validate(data):
     valid_records = []
     error_count = 0
 
-    # TODO: Lap qua data, kiem tra tung record
-    # Giu lai record hop le, dem record loi
+    for record in data:
+        try:
+            price = float(record.get('price', 0))
+        except (TypeError, ValueError):
+            error_count += 1
+            continue
 
-    print(f"Validation complete. Valid: {len(valid_records)}, Errors: {error_count}")
+        category = record.get('category')
+
+        if price <= 0 or not str(category or '').strip():
+            error_count += 1
+            continue
+
+        record['price'] = price
+        valid_records.append(record)
+
+    print(
+        f"Validation complete. {len(valid_records)} valid records, "
+        f"{error_count} errors dropped."
+    )
     return valid_records
 
 
@@ -94,8 +114,17 @@ def transform(data):
     Returns:
         pd.DataFrame: DataFrame da duoc transform
     """
-    # TODO: Tao DataFrame va ap dung transformations
-    pass
+    df = pd.DataFrame(data)
+    if df.empty:
+        print("Transform complete. 0 records processed.")
+        return df
+
+    df['discounted_price'] = df['price'] * 0.9
+    df['category'] = df['category'].astype(str).str.title()
+    df['processed_at'] = datetime.datetime.now().isoformat()
+
+    print(f"Transform complete. {len(df)} records processed.")
+    return df
 
 
 def load(df, output_path):
@@ -105,8 +134,8 @@ def load(df, output_path):
     Goi y:
        - df.to_csv(output_path, index=False)
     """
-    # TODO: Luu DataFrame ra CSV
-    print(f"Data saved to {output_path}")
+    df.to_csv(output_path, index=False)
+    print(f"Data saved to {output_path}. {len(df)} records loaded.")
 
 
 # ============================================================
