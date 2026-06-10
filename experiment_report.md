@@ -1,7 +1,7 @@
 # Experiment Report: Data Quality Impact on AI Agent
 
-**Student ID:** AI20K-XXXX  
-**Name:** Vietns  
+**Student ID:** 2A202600658
+**Name:** Nguyen Si Viet
 **Date:** 2026-06-10
 
 ---

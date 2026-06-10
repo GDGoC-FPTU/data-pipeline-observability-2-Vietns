@@ -2,7 +2,7 @@
 
 # Day 10 Lab: Data Pipeline & Data Observability
 
-**Student Email:** 26ai.vietns@vinuni.edu.vn 
+**Student Email:** vietnguyen29403@gmail.com
 **Name:** Nguyen Si Viet
 
 ---
